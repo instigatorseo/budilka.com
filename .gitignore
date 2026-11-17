@@ -1,0 +1,45 @@
+# ===== WordPress core (third-party, скачано с wordpress.org — не версионируем) =====
+/public/index.php
+/public/wp-activate.php
+/public/wp-blog-header.php
+/public/wp-comments-post.php
+/public/wp-config-sample.php
+/public/wp-cron.php
+/public/wp-links-opml.php
+/public/wp-load.php
+/public/wp-login.php
+/public/wp-mail.php
+/public/wp-settings.php
+/public/wp-signup.php
+/public/wp-trackback.php
+/public/xmlrpc.php
+/public/license.txt
+/public/readme.html
+/public/wp-admin/
+/public/wp-includes/
+
+# ===== Конфиг (локальные креды БД + соль) =====
+/public/wp-config.php
+
+# ===== Дефолтные темы и плагины WP (third-party) — оставляем только наши =====
+/public/wp-content/themes/*
+!/public/wp-content/themes/budilki-theme/
+/public/wp-content/plugins/*
+!/public/wp-content/plugins/budilki/
+
+# ===== Runtime-каталоги WP =====
+/public/wp-content/uploads/
+/public/wp-content/cache/
+/public/wp-content/upgrade/
+/public/wp-content/languages/
+
+# ===== Служебное OSPanel и Playwright =====
+.osp/
+.playwright-mcp/
+
+# ===== Скриншоты разбора оригинала =====
+*.png
+
+# ===== Системное =====
+Thumbs.db
+.DS_Store
