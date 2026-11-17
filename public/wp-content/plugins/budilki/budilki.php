@@ -43,6 +43,105 @@ function budilki_preset_times() {
 	return array( '4:00', '4:30', '5:00', '5:15', '5:30', '5:45', '6:00', '6:15', '6:30', '6:45', '7:00', '7:15', '7:30', '7:45', '8:00', '8:15', '8:30', '8:45', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00' );
 }
 
+/**
+ * Единый каталог городов (name, country, tz) — источник и для time.js, и для генератора.
+ * slug страницы /time/<город>/ вычисляется как sanitize_title(name) — он совпадает
+ * со ссылкой в time.js (encodeURIComponent(name.toLowerCase())).
+ */
+function budilki_cities() {
+	return array(
+		// Россия
+		array( 'name' => 'Москва',                  'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Санкт-Петербург',         'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Новосибирск',             'country' => 'Россия',        'tz' => 'Asia/Novosibirsk' ),
+		array( 'name' => 'Екатеринбург',            'country' => 'Россия',        'tz' => 'Asia/Yekaterinburg' ),
+		array( 'name' => 'Казань',                  'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Нижний Новгород',         'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Самара',                  'country' => 'Россия',        'tz' => 'Europe/Samara' ),
+		array( 'name' => 'Омск',                    'country' => 'Россия',        'tz' => 'Asia/Omsk' ),
+		array( 'name' => 'Челябинск',               'country' => 'Россия',        'tz' => 'Asia/Yekaterinburg' ),
+		array( 'name' => 'Ростов-на-Дону',          'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Уфа',                     'country' => 'Россия',        'tz' => 'Asia/Yekaterinburg' ),
+		array( 'name' => 'Красноярск',              'country' => 'Россия',        'tz' => 'Asia/Krasnoyarsk' ),
+		array( 'name' => 'Воронеж',                 'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Пермь',                   'country' => 'Россия',        'tz' => 'Asia/Yekaterinburg' ),
+		array( 'name' => 'Волгоград',               'country' => 'Россия',        'tz' => 'Europe/Volgograd' ),
+		array( 'name' => 'Калининград',             'country' => 'Россия',        'tz' => 'Europe/Kaliningrad' ),
+		array( 'name' => 'Сочи',                    'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Владивосток',             'country' => 'Россия',        'tz' => 'Asia/Vladivostok' ),
+		array( 'name' => 'Иркутск',                 'country' => 'Россия',        'tz' => 'Asia/Irkutsk' ),
+		array( 'name' => 'Тюмень',                  'country' => 'Россия',        'tz' => 'Asia/Yekaterinburg' ),
+		array( 'name' => 'Саратов',                 'country' => 'Россия',        'tz' => 'Europe/Saratov' ),
+		array( 'name' => 'Краснодар',               'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Тольятти',                'country' => 'Россия',        'tz' => 'Europe/Samara' ),
+		array( 'name' => 'Ижевск',                  'country' => 'Россия',        'tz' => 'Europe/Samara' ),
+		array( 'name' => 'Барнаул',                 'country' => 'Россия',        'tz' => 'Asia/Barnaul' ),
+		array( 'name' => 'Ульяновск',               'country' => 'Россия',        'tz' => 'Europe/Ulyanovsk' ),
+		array( 'name' => 'Хабаровск',               'country' => 'Россия',        'tz' => 'Asia/Vladivostok' ),
+		array( 'name' => 'Ярославль',               'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Махачкала',               'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Оренбург',                'country' => 'Россия',        'tz' => 'Asia/Yekaterinburg' ),
+		array( 'name' => 'Кемерово',                'country' => 'Россия',        'tz' => 'Asia/Novokuznetsk' ),
+		array( 'name' => 'Томск',                   'country' => 'Россия',        'tz' => 'Asia/Tomsk' ),
+		array( 'name' => 'Якутск',                  'country' => 'Россия',        'tz' => 'Asia/Yakutsk' ),
+		array( 'name' => 'Петропавловск-Камчатский','country' => 'Россия',        'tz' => 'Asia/Kamchatka' ),
+		array( 'name' => 'Мурманск',                'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Архангельск',             'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Смоленск',                'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Брянск',                  'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Курск',                   'country' => 'Россия',        'tz' => 'Europe/Moscow' ),
+		array( 'name' => 'Чита',                    'country' => 'Россия',        'tz' => 'Asia/Chita' ),
+
+		// СНГ
+		array( 'name' => 'Минск',      'country' => 'Беларусь',     'tz' => 'Europe/Minsk' ),
+		array( 'name' => 'Алматы',     'country' => 'Казахстан',    'tz' => 'Asia/Almaty' ),
+		array( 'name' => 'Астана',     'country' => 'Казахстан',    'tz' => 'Asia/Almaty' ),
+		array( 'name' => 'Шымкент',    'country' => 'Казахстан',    'tz' => 'Asia/Almaty' ),
+		array( 'name' => 'Киев',       'country' => 'Украина',      'tz' => 'Europe/Kiev' ),
+		array( 'name' => 'Харьков',    'country' => 'Украина',      'tz' => 'Europe/Kiev' ),
+		array( 'name' => 'Одесса',     'country' => 'Украина',      'tz' => 'Europe/Kiev' ),
+		array( 'name' => 'Ереван',     'country' => 'Армения',      'tz' => 'Asia/Yerevan' ),
+		array( 'name' => 'Бишкек',     'country' => 'Кыргызстан',   'tz' => 'Asia/Bishkek' ),
+		array( 'name' => 'Ташкент',    'country' => 'Узбекистан',   'tz' => 'Asia/Tashkent' ),
+		array( 'name' => 'Самарканд',  'country' => 'Узбекистан',   'tz' => 'Asia/Samarkand' ),
+		array( 'name' => 'Баку',       'country' => 'Азербайджан',  'tz' => 'Asia/Baku' ),
+		array( 'name' => 'Кишинёв',    'country' => 'Молдова',      'tz' => 'Europe/Chisinau' ),
+		array( 'name' => 'Душанбе',    'country' => 'Таджикистан',  'tz' => 'Asia/Dushanbe' ),
+		array( 'name' => 'Ашхабад',    'country' => 'Туркменистан', 'tz' => 'Asia/Ashgabat' ),
+
+		// Мир (столицы и крупные города)
+		array( 'name' => 'Берлин',       'country' => 'Германия',        'tz' => 'Europe/Berlin' ),
+		array( 'name' => 'Париж',        'country' => 'Франция',         'tz' => 'Europe/Paris' ),
+		array( 'name' => 'Лондон',       'country' => 'Великобритания',  'tz' => 'Europe/London' ),
+		array( 'name' => 'Мадрид',       'country' => 'Испания',         'tz' => 'Europe/Madrid' ),
+		array( 'name' => 'Рим',          'country' => 'Италия',          'tz' => 'Europe/Rome' ),
+		array( 'name' => 'Стамбул',      'country' => 'Турция',          'tz' => 'Europe/Istanbul' ),
+		array( 'name' => 'Дубай',        'country' => 'ОАЭ',             'tz' => 'Asia/Dubai' ),
+		array( 'name' => 'Нью-Йорк',     'country' => 'США',             'tz' => 'America/New_York' ),
+		array( 'name' => 'Лос-Анджелес', 'country' => 'США',             'tz' => 'America/Los_Angeles' ),
+		array( 'name' => 'Чикаго',       'country' => 'США',             'tz' => 'America/Chicago' ),
+		array( 'name' => 'Торонто',      'country' => 'Канада',          'tz' => 'America/Toronto' ),
+		array( 'name' => 'Токио',        'country' => 'Япония',          'tz' => 'Asia/Tokyo' ),
+		array( 'name' => 'Пекин',        'country' => 'Китай',           'tz' => 'Asia/Shanghai' ),
+		array( 'name' => 'Сеул',         'country' => 'Южная Корея',     'tz' => 'Asia/Seoul' ),
+		array( 'name' => 'Сидней',       'country' => 'Австралия',       'tz' => 'Australia/Sydney' ),
+		array( 'name' => 'Дели',         'country' => 'Индия',           'tz' => 'Asia/Kolkata' ),
+		array( 'name' => 'Мумбаи',       'country' => 'Индия',           'tz' => 'Asia/Kolkata' ),
+		array( 'name' => 'Сан-Паулу',    'country' => 'Бразилия',        'tz' => 'America/Sao_Paulo' ),
+		array( 'name' => 'Буэнос-Айрес', 'country' => 'Аргентина',       'tz' => 'America/Argentina/Buenos_Aires' ),
+		array( 'name' => 'Мехико',       'country' => 'Мексика',         'tz' => 'America/Mexico_City' ),
+	);
+}
+
+function budilki_find_city( $name ) {
+	foreach ( budilki_cities() as $c ) {
+		if ( $c['name'] === $name ) {
+			return $c;
+		}
+	}
+	return null;
+}
+
 add_action( 'init', function () {
 	add_shortcode( 'budilki', 'budilki_shortcode' );
 } );
@@ -71,6 +170,18 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_script( 'budilki-stopwatch', BUDILKI_URL . 'assets/js/stopwatch.js', array( 'budilki-main' ), $v, true );
 	wp_enqueue_script( 'budilki-time', BUDILKI_URL . 'assets/js/time.js', array( 'budilki-main' ), $v, true );
 
+	// Каталог городов — единый источник с генератором (вариант 2).
+	wp_localize_script(
+		'budilki-time',
+		'BUDILKI_CITIES',
+		array_map(
+			function ( $c ) {
+				return array( 'name' => $c['name'], 'tz' => $c['tz'] );
+			},
+			budilki_cities()
+		)
+	);
+
 	wp_add_inline_script(
 		'budilki-main',
 		'window.BUDILKI = ' . wp_json_encode(
@@ -88,6 +199,7 @@ function budilki_shortcode( $atts ) {
 			'tool'     => 'alarm',
 			'time'     => '',   // HH:MM — предустановка будильника
 			'duration' => '',   // секунды — предустановка таймера
+			'city'     => '',   // название города — страница /time/<город>/
 		),
 		$atts,
 		'budilki'
@@ -111,6 +223,9 @@ function budilki_shortcode( $atts ) {
 
 		case 'time':
 			return budilki_render_time();
+
+		case 'city':
+			return budilki_render_city( sanitize_text_field( $atts['city'] ) );
 
 		default:
 			return '<div class="budilki-stub">Неизвестный инструмент: ' . esc_html( $tool ) . '</div>';
@@ -512,3 +627,28 @@ function budilki_render_time() {
 	<?php
 	return budilki_render_shell( 'time', ob_get_clean() );
 }
+
+function budilki_render_city( $city_name ) {
+	$c = budilki_find_city( $city_name );
+	if ( ! $c ) {
+		return budilki_render_shell( 'time', '<div class="budilki-stub">Город не найден.</div>' );
+	}
+
+	ob_start();
+	?>
+	<h1 class="bk-city-h1"><?php echo esc_html( $c['name'] ); ?></h1>
+	<div id="pnl-clock" class="bk-clock">
+		<div id="city-time" class="bk-clock-time">00:00:00</div>
+		<div id="city-date" class="bk-clock-date"></div>
+	</div>
+
+	<div id="pnl-description" class="bk-description">
+		<h2 class="bk-h2">Точное время в <?php echo esc_html( $c['name'] ); ?></h2>
+		<p>На этой странице показаны точные часы города <?php echo esc_html( $c['name'] ); ?> (<?php echo esc_html( $c['country'] ); ?>), обновляемые каждую секунду.</p>
+		<p>Сравните время с другими городами на странице <a href="/time/">точное время онлайн</a>.</p>
+	</div>
+	<?php
+	return budilki_render_shell( 'time', ob_get_clean(), ' data-tz="' . esc_attr( $c['tz'] ) . '"' );
+}
+
+require_once BUDILKI_DIR . 'includes/generator.php';

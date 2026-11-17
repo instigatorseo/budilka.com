@@ -178,6 +178,9 @@
 .bk-city-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; }
 .bk-city-del:hover { color: var(--danger); }
 
+/* H1 страницы города */
+.bk-city-h1 { font-size: 30px; font-weight: 800; margin: 8px 0 0; text-align: center; }
+
 /* Футер */
 .bk-footer {
 	width: 100%; max-width: 1000px; margin-top: 40px; padding: 20px 0;

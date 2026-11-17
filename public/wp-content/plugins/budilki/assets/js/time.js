@@ -15,30 +15,10 @@
 		selCity: document.getElementById('sel-city'),
 	};
 
-	// Каталог городов (name, tz, slug для будущих страниц /time/<город>/)
-	var CATALOG = [
-		{ name: 'Калининград', tz: 'Europe/Kaliningrad' },
-		{ name: 'Москва', tz: 'Europe/Moscow' },
-		{ name: 'Самара', tz: 'Europe/Samara' },
-		{ name: 'Екатеринбург', tz: 'Asia/Yekaterinburg' },
-		{ name: 'Новосибирск', tz: 'Asia/Novosibirsk' },
-		{ name: 'Петропавловск-Камчатский', tz: 'Asia/Kamchatka' },
-		{ name: 'Алматы', tz: 'Asia/Almaty' },
-		{ name: 'Минск', tz: 'Europe/Minsk' },
-		{ name: 'Самарканд', tz: 'Asia/Samarkand' },
-		{ name: 'Бишкек', tz: 'Asia/Bishkek' },
-		{ name: 'Кишинев', tz: 'Europe/Chisinau' },
-		{ name: 'Ереван', tz: 'Asia/Yerevan' },
-		{ name: 'Киев', tz: 'Europe/Kiev' },
-		{ name: 'Берлин', tz: 'Europe/Berlin' },
-		{ name: 'Нью-Йорк', tz: 'America/New_York' },
-		{ name: 'Лондон', tz: 'Europe/London' },
-		{ name: 'Сидней', tz: 'Australia/Sydney' },
-		{ name: 'Торонто', tz: 'America/Toronto' },
-		{ name: 'Токио', tz: 'Asia/Tokyo' },
-		{ name: 'Пекин', tz: 'Asia/Shanghai' },
-		{ name: 'Дубай', tz: 'Asia/Dubai' },
-	];
+	// Каталог городов приходит из PHP (wp_localize_script) — единый источник с генератором.
+	var CATALOG = (window.BUDILKI_CITIES || []).map(function (c) {
+		return { name: c.name, tz: c.tz };
+	});
 
 	var DEFAULT_CITIES = ['Москва', 'Минск', 'Лондон', 'Нью-Йорк', 'Токио'];
 
@@ -82,6 +62,14 @@
 	function tzTimeStr(tz, d) {
 		var p = tzParts(tz, d);
 		return pad2(p.h) + ':' + pad2(p.m) + ':' + pad2(p.s);
+	}
+
+	function tzDateStr(tz, d) {
+		if (!d) d = new Date();
+		var fmt = new Intl.DateTimeFormat('ru-RU', {
+			timeZone: tz, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+		});
+		return fmt.format(d);
 	}
 
 	// смещение таймзоны относительно таймзоны пользователя, в часах (со знаком)
@@ -179,9 +167,35 @@
 		}
 	}
 
+	/* ---------- страница города (/time/<город>/) ---------- */
+	function initCity() {
+		var cityTime = document.getElementById('city-time');
+		if (!cityTime) return;
+		var tz = el.root.getAttribute('data-tz');
+		if (!tz) return;
+		var cityDate = document.getElementById('city-date');
+
+		function renderCity() {
+			var d = new Date();
+			cityTime.textContent = tzTimeStr(tz, d);
+			if (cityDate) cityDate.textContent = tzDateStr(tz, d);
+		}
+		function tick() {
+			var ms = Date.now() % 1000;
+			if (ms < 350 || ms > 650) { setTimeout(tick, 50); return; }
+			setTimeout(tick, 1000);
+			renderCity();
+		}
+		renderCity();
+		tick();
+	}
+
 	/* ---------- инициализация ---------- */
 	function init() {
-		if (!el.time) return; // страница без времени
+		if (!el.time) {
+			initCity();
+			return; // страница города
+		}
 
 		el.addBtn.addEventListener('click', function () {
 			fillCitySelect();
