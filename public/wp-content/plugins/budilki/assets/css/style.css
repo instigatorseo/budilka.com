@@ -157,6 +157,13 @@
 /* SEO-текст */
 .bk-description p { line-height: 1.6; color: var(--fg); margin: 8px 0; max-width: 720px; }
 
+/* Таблица кругов секундомера */
+.bk-laps { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.bk-laps th, .bk-laps td {
+	text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 15px;
+}
+.bk-laps th { color: var(--muted); font-weight: 600; }
+
 /* Футер */
 .bk-footer {
 	width: 100%; max-width: 1000px; margin-top: 40px; padding: 20px 0;

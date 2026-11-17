@@ -68,6 +68,7 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_script( 'budilki-main', BUDILKI_URL . 'assets/js/main.js', array( 'budilki-lang' ), $v, true );
 	wp_enqueue_script( 'budilki-alarm', BUDILKI_URL . 'assets/js/alarm.js', array( 'budilki-main' ), $v, true );
 	wp_enqueue_script( 'budilki-timer', BUDILKI_URL . 'assets/js/timer.js', array( 'budilki-main' ), $v, true );
+	wp_enqueue_script( 'budilki-stopwatch', BUDILKI_URL . 'assets/js/stopwatch.js', array( 'budilki-main' ), $v, true );
 
 	wp_add_inline_script(
 		'budilki-main',
@@ -105,7 +106,7 @@ function budilki_shortcode( $atts ) {
 			return budilki_render_timer( $duration );
 
 		case 'stopwatch':
-			return budilki_render_shell( 'stopwatch', '<div class="budilki-stub">Секундомер — в разработке.</div>' );
+			return budilki_render_stopwatch();
 
 		case 'time':
 			return budilki_render_shell( 'time', '<div class="budilki-stub">Точное время — в разработке.</div>' );
@@ -432,4 +433,38 @@ function budilki_render_timer( $duration ) {
 	</div>
 	<?php
 	return budilki_render_shell( 'timer', ob_get_clean(), $data_duration );
+}
+
+function budilki_render_stopwatch() {
+	ob_start();
+	?>
+	<div id="pnl-clock" class="bk-clock">
+		<div id="stopwatch-time" class="bk-clock-time">00:00.00</div>
+	</div>
+
+	<!-- Кнопки управления -->
+	<div class="bk-toolbar">
+		<button type="button" id="btn-sw-reset" class="bk-btn" disabled>Сброс</button>
+		<button type="button" id="btn-sw-start" class="bk-btn bk-btn-primary">Старт</button>
+		<button type="button" id="btn-sw-lap" class="bk-btn" hidden>Круг</button>
+	</div>
+
+	<!-- Список кругов -->
+	<div id="pnl-laps" class="bk-links" hidden>
+		<h2 class="bk-h2">Круги</h2>
+		<table id="tbl-laps" class="bk-laps">
+			<thead>
+				<tr><th>Круг</th><th>Время</th><th>Общее время</th></tr>
+			</thead>
+			<tbody id="laps-body"></tbody>
+		</table>
+	</div>
+
+	<!-- SEO-текст -->
+	<div id="pnl-description" class="bk-description">
+		<h2 class="bk-h2">Как пользоваться онлайн секундомером</h2>
+		<p>Нажмите «Старт» — секундомер начнёт отсчёт с точностью до сотых секунды. «Круг» фиксирует промежуточный результат, «Сброс» обнуляет.</p>
+	</div>
+	<?php
+	return budilki_render_shell( 'stopwatch', ob_get_clean() );
 }
