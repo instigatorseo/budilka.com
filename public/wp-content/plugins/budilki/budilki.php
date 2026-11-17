@@ -69,6 +69,7 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_script( 'budilki-alarm', BUDILKI_URL . 'assets/js/alarm.js', array( 'budilki-main' ), $v, true );
 	wp_enqueue_script( 'budilki-timer', BUDILKI_URL . 'assets/js/timer.js', array( 'budilki-main' ), $v, true );
 	wp_enqueue_script( 'budilki-stopwatch', BUDILKI_URL . 'assets/js/stopwatch.js', array( 'budilki-main' ), $v, true );
+	wp_enqueue_script( 'budilki-time', BUDILKI_URL . 'assets/js/time.js', array( 'budilki-main' ), $v, true );
 
 	wp_add_inline_script(
 		'budilki-main',
@@ -109,7 +110,7 @@ function budilki_shortcode( $atts ) {
 			return budilki_render_stopwatch();
 
 		case 'time':
-			return budilki_render_shell( 'time', '<div class="budilki-stub">Точное время — в разработке.</div>' );
+			return budilki_render_time();
 
 		default:
 			return '<div class="budilki-stub">Неизвестный инструмент: ' . esc_html( $tool ) . '</div>';
@@ -467,4 +468,47 @@ function budilki_render_stopwatch() {
 	</div>
 	<?php
 	return budilki_render_shell( 'stopwatch', ob_get_clean() );
+}
+
+function budilki_render_time() {
+	ob_start();
+	?>
+	<div id="pnl-clock" class="bk-clock">
+		<div id="time-title" class="bk-clock-title">Точное время</div>
+		<div id="time-time" class="bk-clock-time">00:00:00</div>
+		<div id="time-date" class="bk-clock-date"></div>
+	</div>
+
+	<!-- Список городов -->
+	<div id="pnl-cities" class="bk-links">
+		<h2 class="bk-h2">Время в городах</h2>
+		<div id="cities-list" class="bk-cities"></div>
+		<button type="button" id="btn-add-city" class="bk-btn">Добавить город</button>
+	</div>
+
+	<!-- Модалка добавления города -->
+	<div id="form-city" class="bk-modal" role="dialog" aria-modal="true" hidden>
+		<div class="bk-modal-backdrop"></div>
+		<div class="bk-modal-box">
+			<h3 class="bk-modal-title">Добавить город</h3>
+			<div class="bk-form">
+				<div class="bk-form-row">
+					<label>Город</label>
+					<select id="sel-city" class="bk-select"></select>
+				</div>
+				<div class="bk-form-actions">
+					<button type="button" id="btn-city-cancel" class="bk-btn">Отмена</button>
+					<button type="button" id="btn-city-add" class="bk-btn bk-btn-primary">Добавить</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- SEO-текст -->
+	<div id="pnl-description" class="bk-description">
+		<h2 class="bk-h2">Как пользоваться онлайн часами</h2>
+		<p>Часы показывают точное время в выбранных городах. Добавьте нужный город — его местное время и смещение относительно вашего появятся в списке.</p>
+	</div>
+	<?php
+	return budilki_render_shell( 'time', ob_get_clean() );
 }
