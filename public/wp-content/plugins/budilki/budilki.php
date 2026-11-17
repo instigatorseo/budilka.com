@@ -43,6 +43,49 @@ function budilki_preset_times() {
 	return array( '4:00', '4:30', '5:00', '5:15', '5:30', '5:45', '6:00', '6:15', '6:30', '6:45', '7:00', '7:15', '7:30', '7:45', '8:00', '8:15', '8:30', '8:45', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00' );
 }
 
+/** Лендинги таймера (§4.1): label (для title/URL), slug, длительность в секундах. */
+function budilki_timer_landings() {
+	return array(
+		array( 'label' => '1 минуту',  'slug' => 'таймер-на-1-минуту',  'seconds' => 60 ),
+		array( 'label' => '3 минуты',  'slug' => 'таймер-на-3-минуты',  'seconds' => 180 ),
+		array( 'label' => '5 минут',   'slug' => 'таймер-на-5-минут',   'seconds' => 300 ),
+		array( 'label' => '10 минут',  'slug' => 'таймер-на-10-минут',  'seconds' => 600 ),
+		array( 'label' => '15 минут',  'slug' => 'таймер-на-15-минут',  'seconds' => 900 ),
+		array( 'label' => '20 минут',  'slug' => 'таймер-на-20-минут',  'seconds' => 1200 ),
+		array( 'label' => '30 минут',  'slug' => 'таймер-на-30-минут',  'seconds' => 1800 ),
+		array( 'label' => '40 минут',  'slug' => 'таймер-на-40-минут',  'seconds' => 2400 ),
+		array( 'label' => '45 минут',  'slug' => 'таймер-на-45-минут',  'seconds' => 2700 ),
+		array( 'label' => '60 минут',  'slug' => 'таймер-на-60-минут',  'seconds' => 3600 ),
+		array( 'label' => '10 секунд', 'slug' => 'таймер-на-10-секунд', 'seconds' => 10 ),
+		array( 'label' => '20 секунд', 'slug' => 'таймер-на-20-секунд', 'seconds' => 20 ),
+		array( 'label' => '30 секунд', 'slug' => 'таймер-на-30-секунд', 'seconds' => 30 ),
+		array( 'label' => '45 секунд', 'slug' => 'таймер-на-45-секунд', 'seconds' => 45 ),
+		array( 'label' => '60 секунд', 'slug' => 'таймер-на-60-секунд', 'seconds' => 60 ),
+		array( 'label' => '90 секунд', 'slug' => 'таймер-на-90-секунд', 'seconds' => 90 ),
+		array( 'label' => '1 час',     'slug' => 'таймер-на-1-час',     'seconds' => 3600 ),
+		array( 'label' => '2 часа',    'slug' => 'таймер-на-2-часа',    'seconds' => 7200 ),
+		array( 'label' => '4 часа',    'slug' => 'таймер-на-4-часа',    'seconds' => 14400 ),
+		array( 'label' => '8 часов',   'slug' => 'таймер-на-8-часов',   'seconds' => 28800 ),
+	);
+}
+
+/** Русская подпись длительности для лендингов таймера. */
+function budilki_timer_label( $seconds ) {
+	foreach ( budilki_timer_landings() as $l ) {
+		if ( (int) $l['seconds'] === (int) $seconds ) {
+			return $l['label'];
+		}
+	}
+	if ( $seconds < 60 ) {
+		return $seconds . ' секунд';
+	}
+	$m = (int) round( $seconds / 60 );
+	if ( $m < 60 ) {
+		return $m . ' минут';
+	}
+	return (int) round( $m / 60 ) . ' часов';
+}
+
 /**
  * Единый каталог городов (name, country, tz) — источник и для time.js, и для генератора.
  * slug страницы /time/<город>/ вычисляется как sanitize_title(name) — он совпадает
@@ -169,6 +212,7 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_script( 'budilki-timer', BUDILKI_URL . 'assets/js/timer.js', array( 'budilki-main' ), $v, true );
 	wp_enqueue_script( 'budilki-stopwatch', BUDILKI_URL . 'assets/js/stopwatch.js', array( 'budilki-main' ), $v, true );
 	wp_enqueue_script( 'budilki-time', BUDILKI_URL . 'assets/js/time.js', array( 'budilki-main' ), $v, true );
+	wp_enqueue_script( 'budilki-holiday', BUDILKI_URL . 'assets/js/holiday.js', array( 'budilki-main' ), $v, true );
 
 	// Каталог городов — единый источник с генератором (вариант 2).
 	wp_localize_script(
@@ -176,7 +220,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		'BUDILKI_CITIES',
 		array_map(
 			function ( $c ) {
-				return array( 'name' => $c['name'], 'tz' => $c['tz'] );
+				return array( 'name' => $c['name'], 'tz' => $c['tz'], 'slug' => sanitize_title( $c['name'] ) );
 			},
 			budilki_cities()
 		)
@@ -200,6 +244,11 @@ function budilki_shortcode( $atts ) {
 			'time'     => '',   // HH:MM — предустановка будильника
 			'duration' => '',   // секунды — предустановка таймера
 			'city'     => '',   // название города — страница /time/<город>/
+			'name'     => '',   // название праздника
+			'slug'     => '',   // слаг праздника
+			'date'     => '',   // YYYY-MM-DD праздника
+			'fixed'    => '',   // "1" — фиксированная дата
+			'pinned'   => '',   // "1" — конкретный год (/timer/<слаг>/<год>/)
 		),
 		$atts,
 		'budilki'
@@ -226,6 +275,12 @@ function budilki_shortcode( $atts ) {
 
 		case 'city':
 			return budilki_render_city( sanitize_text_field( $atts['city'] ) );
+
+		case 'holiday':
+			return budilki_render_holiday( $atts );
+
+		case 'holidays-hub':
+			return budilki_render_holidays_hub();
 
 		default:
 			return '<div class="budilki-stub">Неизвестный инструмент: ' . esc_html( $tool ) . '</div>';
@@ -354,11 +409,27 @@ function budilki_render_shell( $tool, $body, $attrs = '' ) {
 function budilki_render_alarm( $time ) {
 	$preset_links = '';
 	foreach ( budilki_preset_times() as $t ) {
-		$slug          = 'будильник-на-' . str_replace( ':', '-', $t );
+		$slug          = sanitize_title( 'будильник-на-' . str_replace( ':', '-', $t ) );
 		$preset_links .= '<a href="/' . esc_attr( $slug ) . '/">' . esc_html( $t ) . '</a>';
 	}
 
 	$data_time = $time ? ' data-alarm-time="' . esc_attr( $time ) . '"' : '';
+
+	if ( $time ) {
+		$h        = (int) $time;
+		$part     = ( $h < 12 ) ? 'утра' : 'дня';
+		$seo_html = '<div id="pnl-description" class="bk-description">'
+			. '<h2 class="bk-h2">Будильник на ' . esc_html( $time ) . '</h2>'
+			. '<p>Онлайн-будильник, который зазвенит ровно в ' . esc_html( $time ) . ' ' . $part . '. Время уже подставлено — нажмите «Старт», чтобы установить будильник.</p>'
+			. '<p>Будильник сработает, пока открыта вкладка браузера. Звук, повтор и заголовок можно изменить в окне настройки.</p>'
+			. '</div>';
+	} else {
+		$seo_html = '<div id="pnl-description" class="bk-description">'
+			. '<h2 class="bk-h2">Как пользоваться онлайн будильником</h2>'
+			. '<p>Выберите время, при желании — звук и заголовок, и нажмите «Старт». Будильник зазвенит точно в заданную минуту, даже если вкладка находится в фоне.</p>'
+			. '<p>Пока будильник установлен, страницу нельзя закрывать: срабатывание работает, только пока открыта вкладка браузера.</p>'
+			. '</div>';
+	}
 
 	ob_start();
 	?>
@@ -393,11 +464,7 @@ function budilki_render_alarm( $time ) {
 	</div>
 
 	<!-- SEO-текст -->
-	<div id="pnl-description" class="bk-description">
-		<h2 class="bk-h2">Как пользоваться онлайн будильником</h2>
-		<p>Выберите время, при желании — звук и заголовок, и нажмите «Старт». Будильник зазвенит точно в заданную минуту, даже если вкладка находится в фоне.</p>
-		<p>Пока будильник установлен, страницу нельзя закрывать: срабатывание работает, только пока открыта вкладка браузера.</p>
-	</div>
+	<?php echo $seo_html; ?>
 
 	<!-- Модалка установки будильника -->
 	<div id="form-alarm" class="bk-modal" role="dialog" aria-modal="true" aria-labelledby="form-alarm-title" hidden>
@@ -458,6 +525,20 @@ function budilki_render_alarm( $time ) {
 function budilki_render_timer( $duration ) {
 	$data_duration = $duration ? ' data-duration="' . esc_attr( (string) $duration ) . '"' : '';
 
+	if ( $duration ) {
+		$label    = budilki_timer_label( (int) $duration );
+		$seo_html = '<div id="pnl-description" class="bk-description">'
+			. '<h2 class="bk-h2">Таймер на ' . esc_html( $label ) . '</h2>'
+			. '<p>Онлайн-таймер обратного отсчёта на ' . esc_html( $label ) . '. Длительность уже задана — нажмите «Старт», и таймер начнёт отсчёт.</p>'
+			. '<p>По окончании таймер подаст звуковой сигнал. Длительность можно изменить в любой момент.</p>'
+			. '</div>';
+	} else {
+		$seo_html = '<div id="pnl-description" class="bk-description">'
+			. '<h2 class="bk-h2">Как пользоваться онлайн таймером</h2>'
+			. '<p>Задайте длительность, выберите звук и заголовок, нажмите «Старт». Таймер отсчитает время и подаст сигнал.</p>'
+			. '</div>';
+	}
+
 	ob_start();
 	?>
 	<div id="pnl-clock" class="bk-clock">
@@ -483,10 +564,7 @@ function budilki_render_timer( $duration ) {
 	</div>
 
 	<!-- SEO-текст -->
-	<div id="pnl-description" class="bk-description">
-		<h2 class="bk-h2">Как пользоваться онлайн таймером</h2>
-		<p>Задайте длительность, выберите звук и заголовок, нажмите «Старт». Таймер отсчитает время и подаст сигнал.</p>
-	</div>
+	<?php echo $seo_html; ?>
 
 	<!-- Модалка установки таймера -->
 	<div id="form-timer" class="bk-modal" role="dialog" aria-modal="true" aria-labelledby="form-timer-title" hidden>
@@ -644,7 +722,7 @@ function budilki_render_city( $city_name ) {
 	</div>
 
 	<div id="pnl-description" class="bk-description">
-		<h2 class="bk-h2">Точное время в <?php echo esc_html( $c['name'] ); ?></h2>
+		<h2 class="bk-h2">Точное время в городе <?php echo esc_html( $c['name'] ); ?></h2>
 		<p>На этой странице показаны точные часы города <?php echo esc_html( $c['name'] ); ?> (<?php echo esc_html( $c['country'] ); ?>), обновляемые каждую секунду.</p>
 		<p>Сравните время с другими городами на странице <a href="/time/">точное время онлайн</a>.</p>
 	</div>
@@ -652,4 +730,96 @@ function budilki_render_city( $city_name ) {
 	return budilki_render_shell( 'time', ob_get_clean(), ' data-tz="' . esc_attr( $c['tz'] ) . '"' );
 }
 
+function budilki_render_holiday( $atts ) {
+	$slug = sanitize_title( (string) $atts['slug'] );
+	$h    = budilki_find_holiday( $slug );
+	if ( ! $h ) {
+		return budilki_render_shell( 'timer', '<div class="budilki-stub">Праздник не найден.</div>' );
+	}
+
+	$date = preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) $atts['date'] ) ? $atts['date'] : '';
+	if ( ! $date ) {
+		$next = budilki_holiday_next( $h );
+		$date = $next[0];
+	}
+	$pinned = '1' === (string) $atts['pinned'];
+
+	$attrs = ' data-holiday-name="' . esc_attr( $h['name'] ) . '"'
+		. ' data-holiday-slug="' . esc_attr( $slug ) . '"'
+		. ' data-holiday-date="' . esc_attr( $date ) . '"'
+		. ' data-holiday-fixed="' . ( $h['fixed'] ? '1' : '0' ) . '"'
+		. ' data-holiday-pinned="' . ( $pinned ? '1' : '0' ) . '"';
+
+	ob_start();
+	?>
+	<h1 class="bk-city-h1"><?php echo esc_html( $h['name'] ); ?></h1>
+	<div id="pnl-clock" class="bk-clock">
+		<div id="holiday-counter" class="bk-holiday-counter">…</div>
+		<div id="holiday-date-line" class="bk-clock-date"></div>
+	</div>
+
+	<?php if ( ! $pinned ) : ?>
+	<div id="pnl-years" class="bk-links">
+		<h2 class="bk-h2">Сколько дней осталось до других годов</h2>
+		<div class="bk-links-grid" id="holiday-years">
+			<?php foreach ( budilki_holiday_year_range() as $y ) : ?>
+				<a href="/timer/<?php echo esc_attr( $slug ); ?>/<?php echo (int) $y; ?>/">Сколько дней до <?php echo (int) $y; ?> года</a>
+			<?php endforeach; ?>
+		</div>
+	</div>
+	<?php endif; ?>
+
+	<div id="pnl-description" class="bk-description">
+		<h2 class="bk-h2">Сколько дней до праздника «<?php echo esc_html( $h['name'] ); ?>»</h2>
+		<?php echo budilki_holiday_text( $h ); ?>
+	</div>
+	<?php
+	return budilki_render_shell( 'timer', ob_get_clean(), $attrs );
+}
+
+function budilki_render_holidays_hub() {
+	ob_start();
+	?>
+	<h1 class="bk-city-h1">Праздники в России</h1>
+	<div id="pnl-holidays" class="bk-links">
+		<div class="bk-cities" id="holidays-hub">
+			<?php foreach ( budilki_holidays() as $h ) : ?>
+				<?php $next = budilki_holiday_next( $h ); ?>
+				<div class="bk-city bk-holiday-item" data-date="<?php echo esc_attr( $next[0] ); ?>">
+					<span class="bk-city-name"><a href="/timer/<?php echo esc_attr( $h['slug'] ); ?>/"><?php echo esc_html( $h['name'] ); ?></a></span>
+					<span class="bk-city-offset"><?php echo esc_html( budilki_short_date_ru( $next[0] ) ); ?></span>
+					<span class="bk-holiday-days"></span>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+	<div id="pnl-description" class="bk-description">
+		<h2 class="bk-h2">Счётчики до праздников</h2>
+		<p>Выберите праздник, чтобы узнать, сколько дней, часов, минут и секунд осталось до него. Счётчик обновляется каждую секунду.</p>
+	</div>
+	<?php
+	return budilki_render_shell( 'timer', ob_get_clean() );
+}
+
+require_once BUDILKI_DIR . 'includes/catalog-holidays.php';
 require_once BUDILKI_DIR . 'includes/generator.php';
+
+/* Ручной запуск генератора SEO-страниц: /wp-admin/?budilki_generate=1 (для админа). */
+add_action( 'admin_init', function () {
+	if ( ! current_user_can( 'manage_options' ) || ! isset( $_GET['budilki_generate'] ) ) {
+		return;
+	}
+	$n = array(
+		'города'     => budilki_generate_city_pages(),
+		'будильники' => budilki_generate_alarm_pages(),
+		'таймеры'    => budilki_generate_timer_pages(),
+		'праздники'  => budilki_generate_holiday_pages(),
+	);
+	add_action( 'admin_notices', function () use ( $n ) {
+		$parts = array();
+		foreach ( $n as $k => $v ) {
+			$parts[] = $k . ' ' . (int) $v;
+		}
+		echo '<div class="notice notice-success"><p>Генератор Budilki: ' . esc_html( implode( ', ', $parts ) ) . '</p></div>';
+	} );
+} );

@@ -17,7 +17,7 @@
 
 	// Каталог городов приходит из PHP (wp_localize_script) — единый источник с генератором.
 	var CATALOG = (window.BUDILKI_CITIES || []).map(function (c) {
-		return { name: c.name, tz: c.tz };
+		return { name: c.name, tz: c.tz, slug: c.slug };
 	});
 
 	var DEFAULT_CITIES = ['Москва', 'Минск', 'Лондон', 'Нью-Йорк', 'Токио'];
@@ -103,7 +103,7 @@
 			var nm = document.createElement('span');
 			nm.className = 'bk-city-name';
 			var a = document.createElement('a');
-			a.href = '/time/' + encodeURIComponent(name.toLowerCase()) + '/';
+			a.href = '/time/' + (c.slug || encodeURIComponent(name.toLowerCase())) + '/';
 			a.textContent = name;
 			nm.appendChild(a);
 

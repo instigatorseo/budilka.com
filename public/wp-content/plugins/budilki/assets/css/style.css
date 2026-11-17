@@ -194,6 +194,10 @@
 /* H1 страницы города */
 .bk-city-h1 { font-size: 30px; font-weight: 800; margin: 8px 0 0; text-align: center; }
 
+/* Счётчик до праздника и хаб /prazdniki/ */
+.bk-holiday-counter { font-size: 44px; font-weight: 800; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.bk-holiday-days { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 64px; text-align: right; }
+
 /* Футер */
 .bk-footer {
 	width: 100%; max-width: 1000px; margin-top: 40px; padding: 20px 0;
