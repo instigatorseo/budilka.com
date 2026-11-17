@@ -55,6 +55,7 @@
 		lastHour: -1,
 
 		init: function () {
+			if (!this.elTime) return;
 			this.tick();
 		},
 
@@ -69,6 +70,7 @@
 		},
 
 		render: function (d) {
+			if (!this.elTime) return;
 			if (!d) d = new Date();
 			var h = d.getHours();
 			var m = d.getMinutes();
@@ -114,6 +116,7 @@
 		},
 
 		setFontLevel: function (delta) {
+			if (!this.elTime) return;
 			var idx = cfg.get('alarmFontSizeId') + delta;
 			idx = Math.max(0, Math.min(FONT_SIZES.length - 1, idx));
 			cfg.set('alarmFontSizeId', idx);
@@ -289,7 +292,8 @@
 				this._worker = new Worker(url);
 				var self = this;
 				this._worker.onmessage = function () {
-					if (typeof window.Budilki.onWorkerTick === 'function') window.Budilki.onWorkerTick();
+					var h = window.Budilki && window.Budilki._tickHandlers;
+					if (h) h.forEach(function (fn) { fn(); });
 				};
 			} catch (e) { this._worker = null; }
 		},
@@ -326,7 +330,8 @@
 		_onVisible: function () {
 			if (document.visibilityState === 'visible') {
 				keepAwake._startWakeLock();
-				if (typeof window.Budilki.onWorkerTick === 'function') window.Budilki.onWorkerTick();
+				var h = window.Budilki && window.Budilki._tickHandlers;
+				if (h) h.forEach(function (fn) { fn(); });
 			}
 		},
 	};
@@ -442,8 +447,8 @@
 			ui.init();
 			clock.init();
 		},
-		// переопределяется в alarm.js
-		onWorkerTick: function () {},
+		// инструменты (alarm/timer/…) регистрируют сюда свои проверки по worker-тику
+		_tickHandlers: [],
 	};
 
 	document.addEventListener('DOMContentLoaded', function () {

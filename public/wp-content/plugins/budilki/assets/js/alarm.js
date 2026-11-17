@@ -426,6 +426,7 @@
 
 	/* ---------- инициализация UI будильника ---------- */
 	function init() {
+		if (!el.setBtn) return; // страница без будильника (таймер/секундомер/время)
 		fillTimeSelects();
 
 		el.setBtn.addEventListener('click', function () {
@@ -482,9 +483,9 @@
 		restore();
 
 		// worker + focus пересчитывают срабатывание
-		B.onWorkerTick = function () {
+		B._tickHandlers.push(function () {
 			if (state.enabled && !state.fired && Date.now() >= state.targetMs) fire();
-		};
+		});
 	}
 
 	init();
