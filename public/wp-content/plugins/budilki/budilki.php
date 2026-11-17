@@ -269,6 +269,7 @@ function budilki_render_shell( $tool, $body, $attrs = '' ) {
 					</div>
 				</div>
 				<a href="/apps/">Приложения</a>
+				<button type="button" class="bk-btn-icon bk-night-toggle" aria-label="Ночной режим" title="Дневной/ночной режим">&#9790;</button>
 				<button type="button" class="bk-btn-icon bk-open-settings" aria-label="Настройки" title="Настройки">&#9881;</button>
 			</nav>
 		</header>
@@ -322,13 +323,13 @@ function budilki_render_shell( $tool, $body, $attrs = '' ) {
 					<label class="bk-check"><input type="checkbox" id="set-digital"> Цифровой шрифт</label>
 					<div class="bk-form-row">
 						<label>Цвет</label>
-						<select id="set-color" class="bk-select">
-							<option value="0">Белый</option>
-							<option value="1">Голубой</option>
-							<option value="2">Зелёный</option>
-							<option value="3">Оранжевый</option>
-							<option value="4">Розовый</option>
-						</select>
+						<div class="bk-color-swatches" id="color-swatches">
+							<button type="button" class="bk-swatch" data-color="0" aria-label="Белый" title="Белый"></button>
+							<button type="button" class="bk-swatch swatch-1" data-color="1" aria-label="Голубой" title="Голубой"></button>
+							<button type="button" class="bk-swatch swatch-2" data-color="2" aria-label="Зелёный" title="Зелёный"></button>
+							<button type="button" class="bk-swatch swatch-3" data-color="3" aria-label="Оранжевый" title="Оранжевый"></button>
+							<button type="button" class="bk-swatch swatch-4" data-color="4" aria-label="Розовый" title="Розовый"></button>
+						</div>
 					</div>
 					<button type="button" class="bk-btn bk-side-close">Закрыть</button>
 				</div>

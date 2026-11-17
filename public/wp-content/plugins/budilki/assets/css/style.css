@@ -1,5 +1,19 @@
 /* ===== Budilki — будильник онлайн ===== */
 
+/* Шрифт «электронные часы» (seven-segment), SIL OFL 1.1, keshikan.net */
+@font-face {
+	font-family: 'DSEG7 Classic';
+	src: url('../fonts/DSEG7Classic-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'DSEG7 Classic';
+	src: url('../fonts/DSEG7Classic-Light.woff2') format('woff2');
+	font-weight: 300;
+	font-display: swap;
+}
+
 :root {
 	--bg: #ffffff;
 	--fg: #111827;
@@ -43,7 +57,6 @@
 	font-weight: 700;
 	letter-spacing: .02em;
 }
-
 .budilki * { box-sizing: border-box; }
 
 /* Шапка */
@@ -104,7 +117,7 @@
 	width: 100%; text-align: center; padding: 12px 0;
 }
 .bk-clock-title { font-size: 24px; color: var(--muted); min-height: 1.2em; max-width: 90%; overflow: hidden; text-overflow: ellipsis; }
-.bk-clock-time { font-size: 96px; font-weight: 700; line-height: 1; white-space: nowrap; }
+.bk-clock-time { font-size: 96px; font-weight: 400; line-height: 1; white-space: nowrap; font-family: 'DSEG7 Classic', monospace; letter-spacing: .02em; }
 .bk-clock-time #clock-ampm { font-size: 32px; color: var(--muted); margin-left: 8px; }
 .bk-clock-date { font-size: 20px; color: var(--muted); margin-top: 8px; }
 
@@ -216,6 +229,19 @@
 .bk-step:hover { border-color: var(--accent); color: var(--accent); }
 .bk-check { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 15px; }
 .bk-check input { width: 18px; height: 18px; }
+
+/* Свотчи цвета */
+.bk-color-swatches { display: flex; gap: 10px; }
+.bk-swatch {
+	width: 30px; height: 30px; border-radius: 50%;
+	border: 2px solid var(--border); cursor: pointer; padding: 0;
+	background: #ffffff;
+}
+.bk-swatch.swatch-1 { background: #0284c7; }
+.bk-swatch.swatch-2 { background: #16a34a; }
+.bk-swatch.swatch-3 { background: #ea580c; }
+.bk-swatch.swatch-4 { background: #db2777; }
+.bk-swatch.active { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
 .bk-form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
 .bk-textarea { width: 100%; font-family: monospace; font-size: 13px; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel); color: var(--fg); }
 

@@ -37,7 +37,25 @@
 			root.classList.remove('color-1', 'color-2', 'color-3', 'color-4');
 			var c = cfg.get('themeColorId');
 			if (c >= 1 && c <= 4) root.classList.add('color-' + c);
+			cfg.syncNightIcon();
+			cfg.syncColorSwatches();
 			clock.render();
+		},
+
+		syncColorSwatches: function () {
+			var c = cfg.get('themeColorId');
+			root.querySelectorAll('.bk-swatch').forEach(function (b) {
+				b.classList.toggle('active', parseInt(b.getAttribute('data-color'), 10) === c);
+			});
+		},
+
+		syncNightIcon: function () {
+			var nb = root.querySelector('.bk-night-toggle');
+			if (!nb) return;
+			var night = cfg.get('themeNightMode');
+			nb.textContent = night ? '☀' : '☾'; // солнце (выключить) / луна (включить)
+			nb.setAttribute('aria-label', night ? 'Включить дневной режим' : 'Включить ночной режим');
+			nb.setAttribute('title', night ? 'Дневной режим' : 'Ночной режим');
 		},
 	};
 
@@ -404,12 +422,26 @@
 				ui.syncSettingsForm();
 				ui.openSide('pnl-settings');
 			});
+
+			// кнопка дневного/ночного режима
+			var nightBtn = root.querySelector('.bk-night-toggle');
+			if (nightBtn) {
+				nightBtn.addEventListener('click', function () {
+					cfg.set('themeNightMode', !cfg.get('themeNightMode'));
+					cfg.apply();
+				});
+			}
 			document.getElementById('set-ampm').addEventListener('change', function () { cfg.set('clock12hour', this.checked); cfg.apply(); });
 			document.getElementById('set-date').addEventListener('change', function () { cfg.set('clockDateVisible', this.checked); cfg.apply(); });
 			document.getElementById('set-seconds').addEventListener('change', function () { cfg.set('clockSecondsVisible', this.checked); cfg.apply(); });
 			document.getElementById('set-night').addEventListener('change', function () { cfg.set('themeNightMode', this.checked); cfg.apply(); });
 			document.getElementById('set-digital').addEventListener('change', function () { cfg.set('themeDigitalFont', this.checked); cfg.apply(); });
-			document.getElementById('set-color').addEventListener('change', function () { cfg.set('themeColorId', parseInt(this.value, 10)); cfg.apply(); });
+			root.querySelectorAll('.bk-swatch').forEach(function (b) {
+				b.addEventListener('click', function () {
+					cfg.set('themeColorId', parseInt(b.getAttribute('data-color'), 10));
+					cfg.apply();
+				});
+			});
 
 			// A± и fullscreen
 			root.querySelector('.bk-font-minus').addEventListener('click', function () { clock.setFontLevel(-1); });
@@ -429,7 +461,7 @@
 			document.getElementById('set-seconds').checked = cfg.get('clockSecondsVisible');
 			document.getElementById('set-night').checked = cfg.get('themeNightMode');
 			document.getElementById('set-digital').checked = cfg.get('themeDigitalFont');
-			document.getElementById('set-color').value = String(cfg.get('themeColorId'));
+			cfg.syncColorSwatches();
 		},
 	};
 
